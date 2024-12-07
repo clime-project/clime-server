@@ -8,8 +8,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "client-data"               :depends-on ("package"))
-#|EXPORT|#				;client-data.lisp
+#|ASD|#             (:file "client-data"               :depends-on ("package"))
+#|EXPORT|#              ;client-data.lisp
  |#
 
 (in-package :clime)
@@ -28,6 +28,6 @@
 
 (defun client-data-create (&optional cand-limit)
   (make-instance 'client-data
-				 :context1 nil :context2 nil :cand-list nil
-				 :cand-limit (or cand-limit *client-data-cand-limit-default*)
-				 :last-mode nil :last-pattern nil :last-level 0))
+                 :context1 nil :context2 nil :cand-list nil
+                 :cand-limit (or cand-limit *client-data-cand-limit-default*)
+                 :last-mode nil :last-pattern nil :last-level 0))

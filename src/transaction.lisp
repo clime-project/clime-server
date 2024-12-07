@@ -7,9 +7,9 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "transaction"               :depends-on ("package"
-#|ASD|#	                                                            "queue"))
-#|EXPORT|#				;transaction.lisp
+#|ASD|#             (:file "transaction"               :depends-on ("package"
+#|ASD|#                                                             "queue"))
+#|EXPORT|#              ;transaction.lisp
 |#
 
 (in-package :clime)
@@ -84,22 +84,22 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defun transaction-execute (queue cdata request lock cvar)
   (when queue
-	(let ((tran (make-instance 'transaction
-							   :cdata    cdata
-							   :request  request
-							   :notifier (lambda ()
-										   (bt:with-lock-held (lock)
-											 (bt:condition-notify cvar))))))
-	  (bt:with-lock-held (lock)
-		(queue-enqueue queue tran)
-		(bt:condition-wait cvar lock))
-	  (let ((response (transaction-response tran))
-			(quit-p   (transaction-quit-p   tran)))
-		(setf (transaction-cdata    tran) nil)
-		(setf (transaction-request  tran) nil)
-		(setf (transaction-response tran) nil)
-		(setf (transaction-quit-p   tran) nil)
-		(setf (transaction-notifier tran) nil)
-		(values response quit-p)))))
+    (let ((tran (make-instance 'transaction
+                               :cdata    cdata
+                               :request  request
+                               :notifier (lambda ()
+                                           (bt:with-lock-held (lock)
+                                             (bt:condition-notify cvar))))))
+      (bt:with-lock-held (lock)
+        (queue-enqueue queue tran)
+        (bt:condition-wait cvar lock))
+      (let ((response (transaction-response tran))
+            (quit-p   (transaction-quit-p   tran)))
+        (setf (transaction-cdata    tran) nil)
+        (setf (transaction-request  tran) nil)
+        (setf (transaction-response tran) nil)
+        (setf (transaction-quit-p   tran) nil)
+        (setf (transaction-notifier tran) nil)
+        (values response quit-p)))))
 
 

@@ -8,8 +8,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "dict-entry"                :depends-on ("package"))
-#|EXPORT|#				;dict-entry.lisp
+#|ASD|#             (:file "dict-entry"                :depends-on ("package"))
+#|EXPORT|#              ;dict-entry.lisp
  |#
 
 (in-package :clime)
@@ -35,16 +35,16 @@
 (declaim (inline entry=))
 (defun entry= (e1 e2)
   (and (string= (car e1) (car e2))
-	   (string= (cdr e1) (cdr e2))))
+       (string= (cdr e1) (cdr e2))))
 
 (declaim (inline entry/=))
 (defun entry/= (e1 e2)
   (or (string/= (car e1) (car e2))
-	  (string/= (cdr e1) (cdr e2))))
+      (string/= (cdr e1) (cdr e2))))
 
 (defmacro with-entry ((pattern-sym word-sym) entry &rest body)
   `(destructuring-bind (,pattern-sym . ,word-sym) ,entry
-	 ,@body))
+     ,@body))
 
 
 ;;------------------------------------------------------------------------------
@@ -79,17 +79,17 @@
 (declaim (inline context-entry=))
 (defun context-entry= (e1 e2)
   (and (string= (context1-of        e1) (context1-of        e2))
-	   (string= (context2-of        e1) (context2-of        e2))
-	   (string= (context-pattern-of e1) (context-pattern-of e2))
-	   (string= (context-word-of    e1) (context-word-of    e2))))
+       (string= (context2-of        e1) (context2-of        e2))
+       (string= (context-pattern-of e1) (context-pattern-of e2))
+       (string= (context-word-of    e1) (context-word-of    e2))))
 
 (declaim (inline context-match-level))
 (defun context-match-level (entry context1 context2)
   (cond
-	((string/= (context2-of entry) context2) 0)
-	((string/= (context1-of entry) context1) 1)
-	(t                                       2)))
+    ((string/= (context2-of entry) context2) 0)
+    ((string/= (context1-of entry) context1) 1)
+    (t                                       2)))
 
 (defmacro with-context-entry ((context1-sym context2-sym pattern-sym word-sym) entry &rest body)
   `(destructuring-bind (,context1-sym ,context2-sym ,pattern-sym . ,word-sym) ,entry
-	 ,@body))
+     ,@body))

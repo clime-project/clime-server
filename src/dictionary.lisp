@@ -8,10 +8,10 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "dictionary"                :depends-on ("package"
-#|ASD|#	                                                            "dict-entry"
-#|ASD|#	                                                            "kana"))
-#|EXPORT|#				;dictionary.lisp
+#|ASD|#             (:file "dictionary"                :depends-on ("package"
+#|ASD|#                                                             "dict-entry"
+#|ASD|#                                                             "kana"))
+#|EXPORT|#              ;dictionary.lisp
  |#
 
 (in-package :clime)
@@ -293,8 +293,8 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defgeneric dictionary-search-afterfix (dict callback context1 context2)
   (:method (dict callback context1 context2)
-	(declare (ignore dict callback context1 context2))
-	t))
+    (declare (ignore dict callback context1 context2))
+    t))
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### dictionary-register-word 総称関数
@@ -324,8 +324,8 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defgeneric dictionary-register-word (dict pattern word)
   (:method (dict pattern word)
-	(declare (ignore dict pattern word))
-	nil))
+    (declare (ignore dict pattern word))
+    nil))
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### dictionary-unregister-word 総称関数
@@ -356,8 +356,8 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defgeneric dictionary-unregister-word (dict pattern word callback)
   (:method (dict pattern word callback)
-	(declare (ignore dict pattern word callback))
-	(values)))
+    (declare (ignore dict pattern word callback))
+    (values)))
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### dictionary-learn 総称関数
@@ -388,8 +388,8 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defgeneric dictionary-learn (dict context1 context2 entry)
   (:method (dict context1 context2 entry)
-	(declare (ignore dict context1 context2 entry))
-	nil))
+    (declare (ignore dict context1 context2 entry))
+    nil))
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### dictionary-save 総称関数
@@ -420,46 +420,46 @@
 
 (defun dictionary-fix-words (contents &optional (get-entry #'identity))
   (labels ((to-string (value)
-			 (make-string 1 :initial-element (code-char value))))
-	(if (listp contents)
-		(dolist (item contents)
-		  (let ((entry (funcall get-entry item)))
-			(when (numberp (cdr entry))
-			  (setf (cdr entry) (to-string (cdr entry))))))
-		(let ((count (length contents)))
-		  (labels ((recur (index)
-					 (when (< index count)
-					   (let ((entry (funcall get-entry (aref contents index))))
-						 (when (numberp (cdr entry))
-						   (setf (cdr entry) (to-string (cdr entry)))))
-					   (recur (1+ index)))))
-			(recur 0))))
-	contents))
+             (make-string 1 :initial-element (code-char value))))
+    (if (listp contents)
+        (dolist (item contents)
+          (let ((entry (funcall get-entry item)))
+            (when (numberp (cdr entry))
+              (setf (cdr entry) (to-string (cdr entry))))))
+        (let ((count (length contents)))
+          (labels ((recur (index)
+                     (when (< index count)
+                       (let ((entry (funcall get-entry (aref contents index))))
+                         (when (numberp (cdr entry))
+                           (setf (cdr entry) (to-string (cdr entry)))))
+                       (recur (1+ index)))))
+            (recur 0))))
+    contents))
 
 (defun dictionary-okurigana-match-p (input entry)
   (with-entry (pattern word) entry
-	(let* ((pattern-length (length pattern))
-		   (last-char (char pattern (1- pattern-length))))
-	  ;; * で終わる pattern のみを送りがな検索の対象とする
-	  (when (and (char= last-char #\*) (< 1 pattern-length))
-		;; 末尾の * を無視するように調整
-		(decf pattern-length)
-		(setf last-char (char pattern (1- pattern-length)))
-		(labels ((make-entry-impl ()
-				   (let ((suffix (subseq input (1- pattern-length))))
-					 (multiple-value-bind (hira kana ascii err) (kana-convert-from-pattern suffix)
-					   (declare (ignore kana ascii err))
-					   (make-entry pattern (concatenate 'string word hira))))))
-		  (if (char= last-char #\@)
-			  ;; at sign で終わる pattern : あ行の送りがな（ex: dea' => 出会 ）
-			  (when (and (<= pattern-length (length input))
-						 (string= pattern input :end1 (1- pattern-length)
-								  :end2 (1- pattern-length))
-						 (position (char input (1- pattern-length)) "aeiou"))
-				(make-entry-impl))
-			  ;; 子音で終わる pattern : あ行以外の送りがな
-			  (when (and (< pattern-length (length input))
-						 (string= pattern input :end1 pattern-length :end2 pattern-length)
-						 (position last-char "bcdfghjklmnpqrstvwxyz"))
-				(make-entry-impl))))))))
+     (let* ((pattern-length (length pattern))
+            (last-char (char pattern (1- pattern-length))))
+       ;; * で終わる pattern のみを送りがな検索の対象とする
+       (when (and (char= last-char #\*) (< 1 pattern-length))
+         ;; 末尾の * を無視するように調整
+         (decf pattern-length)
+         (setf last-char (char pattern (1- pattern-length)))
+         (labels ((make-entry-impl ()
+                    (let ((suffix (subseq input (1- pattern-length))))
+                      (multiple-value-bind (hira kana ascii err) (kana-convert-from-pattern suffix)
+                        (declare (ignore kana ascii err))
+                        (make-entry pattern (concatenate 'string word hira))))))
+           (if (char= last-char #\@)
+               ;; at sign で終わる pattern : あ行の送りがな（ex: dea' => 出会 ）
+               (when (and (<= pattern-length (length input))
+                          (string= pattern input :end1 (1- pattern-length)
+                                                 :end2 (1- pattern-length))
+                          (position (char input (1- pattern-length)) "aeiou"))
+                 (make-entry-impl))
+               ;; 子音で終わる pattern : あ行以外の送りがな
+               (when (and (< pattern-length (length input))
+                          (string= pattern input :end1 pattern-length :end2 pattern-length)
+                          (position last-char "bcdfghjklmnpqrstvwxyz"))
+                 (make-entry-impl))))))))
 

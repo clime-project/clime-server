@@ -8,9 +8,9 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "kana"                      :depends-on ("package"
-#|ASD|#	                                                            "utility"))
-#|EXPORT|#				;kana.lisp
+#|ASD|#             (:file "kana"                      :depends-on ("package"
+#|ASD|#                                                             "utility"))
+#|EXPORT|#              ;kana.lisp
  |#
 
 (in-package :clime)
@@ -263,75 +263,75 @@
 
 (defun kana-lower-bound (ch arr top end)
   (if (= top end)
-	  top
-	  (let* ((mid     (ash (+ top end) -1))
-			 (pattern (aref (aref arr mid) 0)))
-		;(format t "~S : ~C~%" pattern ch)
-		(if (char< (char pattern 0) ch)
-			(kana-lower-bound ch arr (1+ mid) end)
-			(kana-lower-bound ch arr top mid)))))
+      top
+      (let* ((mid     (ash (+ top end) -1))
+             (pattern (aref (aref arr mid) 0)))
+        ;;(format t "~S : ~C~%" pattern ch)
+        (if (char< (char pattern 0) ch)
+            (kana-lower-bound ch arr (1+ mid) end)
+            (kana-lower-bound ch arr top mid)))))
 
 (defun kana-upper-bound (ch arr top end)
   (if (= top end)
-	  top
-	  (let* ((mid     (ash (+ top end) -1))
-			 (pattern (aref (aref arr mid) 0)))
-		;(format t "~S : ~C~%" pattern ch)
-		(if (char<= (char pattern 0) ch)
-			(kana-upper-bound ch arr (1+ mid) end)
-			(kana-upper-bound ch arr top mid)))))
+      top
+      (let* ((mid     (ash (+ top end) -1))
+             (pattern (aref (aref arr mid) 0)))
+        ;;(format t "~S : ~C~%" pattern ch)
+        (if (char<= (char pattern 0) ch)
+            (kana-upper-bound ch arr (1+ mid) end)
+            (kana-upper-bound ch arr top mid)))))
 
 (defun kana-find-entry (pattern idx arr)
   (let ((rest-length (- (length pattern) idx)))
-	(labels ((recur (cur end)
-			   (if (= cur end)
-				   nil
-				   (let* ((entry     (aref arr cur))
-						  (entry-len (length (aref entry 0))))
-					 (if (and (<= entry-len rest-length)
-							  (string= (aref entry 0) pattern :start2 idx :end2 (+ idx entry-len)))
-						 entry
-						 (recur (1+ cur) end))))))
-	  (recur (kana-lower-bound (char pattern idx) arr 0 (length arr))
-			 (kana-upper-bound (char pattern idx) arr 0 (length arr))))))
+    (labels ((recur (cur end)
+               (if (= cur end)
+                   nil
+                   (let* ((entry     (aref arr cur))
+                          (entry-len (length (aref entry 0))))
+                     (if (and (<= entry-len rest-length)
+                              (string= (aref entry 0) pattern :start2 idx :end2 (+ idx entry-len)))
+                         entry
+                         (recur (1+ cur) end))))))
+      (recur (kana-lower-bound (char pattern idx) arr 0 (length arr))
+             (kana-upper-bound (char pattern idx) arr 0 (length arr))))))
 
 (let ((entry-n nil))
   (defun kana-extra-n-p (pattern idx arr)
-	(when (and (char= #\n (char pattern     idx))
-			   (or (= idx (1- (length pattern)))
-				   (position  (char pattern (1+ idx)) "bcdfghjklmnpqrstvwxz!?,.-")))
-	  (unless entry-n
-		(setf entry-n (kana-find-entry "n'" 0 arr)))
-	  entry-n)))
+    (when (and (char= #\n (char pattern     idx))
+               (or (= idx (1- (length pattern)))
+                   (position  (char pattern (1+ idx)) "bcdfghjklmnpqrstvwxz!?,.-")))
+      (unless entry-n
+        (setf entry-n (kana-find-entry "n'" 0 arr)))
+      entry-n)))
 
 (let ((entry-tt nil))
   (defun kana-extra-double-p (pattern idx arr)
-	(when (and (position (char pattern idx) "bcdfghjklmpqrstvwxyz")
-			   (< idx (1- (length pattern)))
-			   (char= (char pattern idx) (char pattern (1+ idx))))
-	  (unless entry-tt
-		(setf entry-tt (kana-find-entry "xtu" 0 arr)))
-	  entry-tt)))
+    (when (and (position (char pattern idx) "bcdfghjklmpqrstvwxyz")
+               (< idx (1- (length pattern)))
+               (char= (char pattern idx) (char pattern (1+ idx))))
+      (unless entry-tt
+        (setf entry-tt (kana-find-entry "xtu" 0 arr)))
+      entry-tt)))
 
 (defun kana-convert-impl (pattern idx arr)
   (aif (kana-find-entry pattern idx arr)
-	   (values (length (aref it 0)) (aref it 1) (aref it 2) 0)
-	   (aif (kana-extra-n-p pattern idx arr)
-			(values 1 (aref it 1) (aref it 2) 0)
-			(aif (kana-extra-double-p pattern idx arr)
-				 (values 1 (aref it 1) (aref it 2) 0)
-				 (let ((tmp (format nil "~C" (char pattern idx))))
-				   (values 1 tmp tmp 1))))))
+       (values (length (aref it 0)) (aref it 1) (aref it 2) 0)
+       (aif (kana-extra-n-p pattern idx arr)
+            (values 1 (aref it 1) (aref it 2) 0)
+            (aif (kana-extra-double-p pattern idx arr)
+                 (values 1 (aref it 1) (aref it 2) 0)
+                 (let ((tmp (format nil "~C" (char pattern idx))))
+                   (values 1 tmp tmp 1))))))
 
 (defun kana-convert-from-pattern (pattern)
   ;; 入力パターンは全部小文字に変換しておく
   (let ((pattern (string-downcase pattern)))
-	(labels ((concat (lst)
-			   (apply #'concatenate 'string (nreverse lst)))
-			 (recur (idx err acc1 acc2)
-			   (if (= (length pattern) idx)
-				   (values (concat acc1) (concat acc2) pattern err)
-				   (multiple-value-bind (length s1 s2 error) (kana-convert-impl pattern idx *kana-map*)
-					 (recur (+ idx length) (+ err error) (push s1 acc1) (push s2 acc2))))))
-	  (recur 0 0 nil nil))))
+    (labels ((concat (lst)
+               (apply #'concatenate 'string (nreverse lst)))
+             (recur (idx err acc1 acc2)
+               (if (= (length pattern) idx)
+                   (values (concat acc1) (concat acc2) pattern err)
+                   (multiple-value-bind (length s1 s2 error) (kana-convert-impl pattern idx *kana-map*)
+                     (recur (+ idx length) (+ err error) (push s1 acc1) (push s2 acc2))))))
+      (recur 0 0 nil nil))))
 

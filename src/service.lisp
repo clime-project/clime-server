@@ -7,8 +7,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "service"                   :depends-on ("package"))
-#|EXPORT|#				;service.lisp
+#|ASD|#             (:file "service"                   :depends-on ("package"))
+#|EXPORT|#              ;service.lisp
  |#
 
 (in-package :clime)
@@ -54,7 +54,7 @@
 ;;                       (format t ".")
 ;;                       (sleep 3)
 ;;                       (recur)))))
-;;    	(recur))))
+;;      (recur))))
 ;;
 ;;(service-stop *service*)
 ;;(service-join *service*)
@@ -72,10 +72,10 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defmacro service-start ((&key name (stop-flag 'stop-flag)) &body body)
   (let ((names (and name (list :name name))))
-	`(let ((,stop-flag nil))
-	   (cons (bt:make-thread (lambda () ,@body) ,@names)
-			 (lambda ()
-			   (setf ,stop-flag t))))))
+    `(let ((,stop-flag nil))
+       (cons (bt:make-thread (lambda () ,@body) ,@names)
+             (lambda ()
+               (setf ,stop-flag t))))))
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### service-stop 関数

@@ -7,8 +7,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "utility"                   :depends-on ("package"))
-#|EXPORT|#				;utility.lisp
+#|ASD|#             (:file "utility"                   :depends-on ("package"))
+#|EXPORT|#              ;utility.lisp
  |#
 
 (in-package :clime)
@@ -16,21 +16,21 @@
 
 (defmacro while (test &body body)
   `(do ()
-	   ((not ,test))
-	 ,@body))
+       ((not ,test))
+     ,@body))
 
 (defmacro until (test &body body)
   `(do ()
-	   (,test)
-	 ,@body))
+       (,test)
+     ,@body))
 
 (defmacro aif (test-form then-form &optional else-form)
   `(let ((it ,test-form))
-	 (if it
-		 ,then-form
-		 ,else-form)))
+     (if it
+         ,then-form
+         ,else-form)))
 
 (defmacro awhen (test-form &body body)
   `(let ((it ,test-form))
-	 (when it
-	   ,@body)))
+     (when it
+       ,@body)))

@@ -7,8 +7,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#				(:file "queue"                     :depends-on ("package"))
-#|EXPORT|#				;queue.lisp
+#|ASD|#             (:file "queue"                     :depends-on ("package"))
+#|EXPORT|#              ;queue.lisp
  |#
 
 (in-package :clime)
@@ -46,8 +46,8 @@
 (defmethod initialize-instance :after ((que queue) &rest initargs)
   (declare (ignore initargs))
   (with-slots (head tail) que
-	(setf tail   (cons nil nil))
-	(setf head   tail))
+    (setf tail   (cons nil nil))
+    (setf head   tail))
   que)
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
@@ -109,14 +109,14 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defun queue-enqueue (que item)
   (with-slots (tail lock) que
-	(bt:with-lock-held (lock)
-	  (let ((new-tail (cons nil nil)))
-		(setf (car tail) item)
-		(setf (cdr tail) new-tail)
-		(setf tail new-tail))
-	  (let ((notifier (queue-notifier que)))
-		(when notifier
-		  (funcall notifier)))))
+    (bt:with-lock-held (lock)
+      (let ((new-tail (cons nil nil)))
+        (setf (car tail) item)
+        (setf (cdr tail) new-tail)
+        (setf tail new-tail))
+      (let ((notifier (queue-notifier que)))
+        (when notifier
+          (funcall notifier)))))
   item)
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
@@ -149,7 +149,7 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defun queue-dequeue (que)
   (unless (queue-empty-p que)
-	(let ((cons (queue-head que)))
-	  (setf (queue-head que) (cdr cons))
-	  (car cons))))
+    (let ((cons (queue-head que)))
+      (setf (queue-head que) (cdr cons))
+      (car cons))))
 
