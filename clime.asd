@@ -5,7 +5,7 @@
                 "cl-fad"
                 "cl-ppcre"
                 "usocket")
-  :components  (;; ---------------------------------------- BEGIN COMPONENTS
+  :components ((:module "src" :components (;; ---------------------------------------- BEGIN COMPONENTS
                 (:file "client-data"               :depends-on ("package"))
                 (:file "console"                   :depends-on ("package"
                                                                 "client-data"
@@ -92,4 +92,4 @@
                 (:file "utility"                   :depends-on ("package"))
                 (:file "vague-matcher"             :depends-on ("package"))
                 ;; ------------------------------------------ END COMPONENTS
-))
+))))
