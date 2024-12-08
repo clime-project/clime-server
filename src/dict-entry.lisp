@@ -8,7 +8,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "dict-entry"                :depends-on ("package"))
+#|ASD|#                             (:file "dict-entry"            :depends-on ("package"))
 #|EXPORT|#              ;dict-entry.lisp
  |#
 

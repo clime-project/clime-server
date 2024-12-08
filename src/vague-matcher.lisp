@@ -8,7 +8,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "vague-matcher"             :depends-on ("package"))
+#|ASD|#                             (:file "vague-matcher"         :depends-on ("package"))
 #|EXPORT|#              ;vague-matcher.lisp
  |#
 

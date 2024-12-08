@@ -7,7 +7,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "queue"                     :depends-on ("package"))
+#|ASD|#                             (:file "queue"                 :depends-on ("package"))
 #|EXPORT|#              ;queue.lisp
  |#
 

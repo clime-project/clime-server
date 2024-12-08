@@ -7,7 +7,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "utility"                   :depends-on ("package"))
+#|ASD|#                             (:file "utility"               :depends-on ("package"))
 #|EXPORT|#              ;utility.lisp
  |#
 

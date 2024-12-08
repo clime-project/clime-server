@@ -8,9 +8,9 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "dictionary-lookup"         :depends-on ("package"
-#|ASD|#                                                             "dict-entry"
-#|ASD|#                                                             "dictionary"))
+#|ASD|#                             (:file "dictionary-lookup"     :depends-on ("package"
+#|ASD|#                                                                         "dict-entry"
+#|ASD|#                                                                         "dictionary"))
 #|EXPORT|#              ;dictionary-lookup.lisp
  |#
 

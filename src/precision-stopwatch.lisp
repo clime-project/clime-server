@@ -8,7 +8,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "precision-stopwatch"       :depends-on ("package"))
+#|ASD|#                             (:file "precision-stopwatch"   :depends-on ("package"))
 #|EXPORT|#              ;precision-stopwatch.lisp
  |#
 

@@ -7,9 +7,9 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "digits"                    :depends-on ("package"
-#|ASD|#                                                             "datetime-coder"
-#|ASD|#                                                             "utility"))
+#|ASD|#                             (:file "digits"                :depends-on ("package"
+#|ASD|#                                                                         "datetime-coder"
+#|ASD|#                                                                         "utility"))
 #|EXPORT|#              ;digits.lisp
 |#
 

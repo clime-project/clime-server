@@ -8,18 +8,18 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "dictionary-set"            :depends-on ("package"
-#|ASD|#                                                             "dict-entry"
-#|ASD|#                                                             "dictionary"
-#|ASD|#                                                             "dictionary-learn"
-#|ASD|#                                                             "dictionary-lookup"
-#|ASD|#                                                             "dictionary-text"
-#|ASD|#                                                             "dictionary-user"
-#|ASD|#                                                             "digits"
-#|ASD|#                                                             "kana"
-#|ASD|#                                                             "precision-stopwatch"
-#|ASD|#                                                             "service.logger"
-#|ASD|#                                                             "vague-matcher"))
+#|ASD|#                             (:file "dictionary-set"        :depends-on ("package"
+#|ASD|#                                                                         "dict-entry"
+#|ASD|#                                                                         "dictionary"
+#|ASD|#                                                                         "dictionary-learn"
+#|ASD|#                                                                         "dictionary-lookup"
+#|ASD|#                                                                         "dictionary-text"
+#|ASD|#                                                                         "dictionary-user"
+#|ASD|#                                                                         "digits"
+#|ASD|#                                                                         "kana"
+#|ASD|#                                                                         "precision-stopwatch"
+#|ASD|#                                                                         "service.logger"
+#|ASD|#                                                                         "vague-matcher"))
 #|EXPORT|#              ;dictionary-set.lisp
  |#
 

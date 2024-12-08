@@ -7,7 +7,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "service"                   :depends-on ("package"))
+#|ASD|#                             (:file "service"               :depends-on ("package"))
 #|EXPORT|#              ;service.lisp
  |#
 

@@ -8,10 +8,10 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "dictionary-learn"          :depends-on ("package"
-#|ASD|#                                                             "dict-entry"
-#|ASD|#                                                             "dictionary"
-#|ASD|#                                                             "utility"))
+#|ASD|#                             (:file "dictionary-learn"      :depends-on ("package"
+#|ASD|#                                                                         "dict-entry"
+#|ASD|#                                                                         "dictionary"
+#|ASD|#                                                                         "utility"))
 #|EXPORT|#              ;dictionary-learn.lisp
  |#
 

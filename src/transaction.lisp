@@ -7,8 +7,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "transaction"               :depends-on ("package"
-#|ASD|#                                                             "queue"))
+#|ASD|#                             (:file "transaction"           :depends-on ("package"
+#|ASD|#                                                                         "queue"))
 #|EXPORT|#              ;transaction.lisp
 |#
 

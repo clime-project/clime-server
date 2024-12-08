@@ -8,11 +8,11 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "dictionary-user"           :depends-on ("package"
-#|ASD|#                                                             "dict-entry"
-#|ASD|#                                                             "dictionary"
-#|ASD|#                                                             "dictionary-text"
-#|ASD|#                                                             "utility"))
+#|ASD|#                             (:file "dictionary-user"       :depends-on ("package"
+#|ASD|#                                                                         "dict-entry"
+#|ASD|#                                                                         "dictionary"
+#|ASD|#                                                                         "dictionary-text"
+#|ASD|#                                                                         "utility"))
 #|EXPORT|#              ;dictionary-user.lisp
  |#
 

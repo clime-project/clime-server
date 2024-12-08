@@ -8,8 +8,8 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "kana"                      :depends-on ("package"
-#|ASD|#                                                             "utility"))
+#|ASD|#                             (:file "kana"                  :depends-on ("package"
+#|ASD|#                                                                         "utility"))
 #|EXPORT|#              ;kana.lisp
  |#
 

@@ -7,11 +7,11 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "console"                   :depends-on ("package"
-#|ASD|#                                                             "client-data"
-#|ASD|#                                                             "protocols"
-#|ASD|#                                                             "service.logger"
-#|ASD|#                                                             "service.port-listener"))
+#|ASD|#                             (:file "console"               :depends-on ("package"
+#|ASD|#                                                                         "client-data"
+#|ASD|#                                                                         "protocols"
+#|ASD|#                                                                         "service.logger"
+#|ASD|#                                                                         "service.port-listener"))
 #|EXPORT|#              ;console.lisp
 |#
 

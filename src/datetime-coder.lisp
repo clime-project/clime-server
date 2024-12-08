@@ -7,7 +7,7 @@
 ;;
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
-#|ASD|#             (:file "datetime-coder"            :depends-on ("package"))
+#|ASD|#                             (:file "datetime-coder"        :depends-on ("package"))
 #|EXPORT|#              ;datetime-coder.lisp
 |#
 
