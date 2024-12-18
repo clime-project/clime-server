@@ -83,10 +83,10 @@
       (setf year  mon)
       (setf mon  date)
       (setf date    1)))
-  (when (and year (< year 1000))
+  (when (and year (< year 100))
     (setf year (+ 2000 year)))
-  ;;MEMO : 暫定対処 - universal-time 制約により 1900年以前は無視する
-  (when (and (or (null year) (< 1900 year))
+  ;;MEMO : local-time では西暦 0 年は不正
+  (when (and (not (zerop year))
              (<= 1 mon 12)
              (<= 1 date (digits-get-days-of-month year mon)))
     ;;MEMO : year が nil になるパターンがあるが、呼び出し元で展開する

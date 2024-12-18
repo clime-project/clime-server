@@ -21,13 +21,21 @@
 (defparameter *dtcoder-week-days2*  '("月曜日" "火曜日" "水曜日"
                                       "木曜日" "金曜日" "土曜日" "日曜日"))
 
+;; return list - (sec minute hour day month year day-of-week)
+;;    * day-of-week - mon:0 tue:1 ... sat:5 sun:6 (universal-time of common lisp)
 (defun dtcoder-now ()
-  (let ((value (get-universal-time)))
-    (multiple-value-list (decode-universal-time value))))
-
+  (let* ((value (get-universal-time))
+         (lst   (multiple-value-list (decode-universal-time value))))
+    (setf (cdr (nthcdr 6 lst)) nil)
+    lst))
+    
 (defun dtcoder-make-date (year month date)
-  (let ((value (encode-universal-time 0 0 0 date month year)))
-    (multiple-value-list (decode-universal-time value))))
+  (let ((value (local-time:encode-timestamp 0 0 0 0 date month year)))
+    (multiple-value-bind (nsec sec min hour day mon year dow)
+                                       (local-time:decode-timestamp value)
+      (declare (ignore nsec))
+      ;;MEMO : local-time は day-of-week が sunday:0 - saturday:6 なので変換が必要
+      (list sec min hour day mon year (if (zerop dow) 6 (1- dow))))))
 
 (defun dtcoder-make-time (hour minute second)
   (let ((list (dtcoder-now)))

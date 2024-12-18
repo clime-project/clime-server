@@ -4,6 +4,7 @@
   :depends-on  ("bordeaux-threads"
                 "cl-fad"
                 "cl-ppcre"
+                "local-time"
                 "usocket")
   :components ((:module "src"
                 :components (;; ---------------------------------------- BEGIN COMPONENTS
