@@ -86,7 +86,8 @@
   (when (and year (< year 100))
     (setf year (+ 2000 year)))
   ;;MEMO : local-time では西暦 0 年は不正
-  (when (and (not (zerop year))
+  (when (and (or (null year)
+                 (not (zerop year)))
              (<= 1 mon 12)
              (<= 1 date (digits-get-days-of-month year mon)))
     ;;MEMO : year が nil になるパターンがあるが、呼び出し元で展開する
