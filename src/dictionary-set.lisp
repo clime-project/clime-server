@@ -54,6 +54,26 @@
                (recur (cdr lst)))))
     (recur (slot-value dictset 'dicts))))
 
+(defun unicode-codepoint-p (pattern)
+  (let ((len (length pattern)))
+    (when (and (< 2 len)
+               (or (char= (char pattern 0) #\u)
+                   (char= (char pattern 0) #\U))
+               (char= (char pattern 1) #\+))
+      (labels ((recur (idx acc)
+                 (if (= idx len)
+                     acc
+                     (let ((code (char-code (char pattern idx))))
+                       (cond
+                         ((and (<= #.(char-code #\0) code #.(char-code #\9)))
+                          (recur (1+ idx) (+ (ash acc 4) (- code #.(char-code #\0)))))
+                         ((and (<= #.(char-code #\a) code #.(char-code #\f)))
+                          (recur (1+ idx) (+ (ash acc 4) (+ 10 (- code #.(char-code #\a))))))
+                         ((and (<= #.(char-code #\A) code #.(char-code #\F)))
+                          (recur (1+ idx) (+ (ash acc 4) (+ 10 (- code #.(char-code #\A))))))
+                         (t nil))))))
+        (awhen (recur 2 0)
+          (and (<= it #x10FFFF) it))))))    ;; #x10FFFF means 'Max unicode codepoint.'
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
 ;;#### dictionary-set クラス
@@ -139,6 +159,9 @@
              (add-when-digits ()
                (digits-candidates pattern (lambda (word)
                                             (funcall collector (make-entry nil word)))))
+             (add-unicode-char (pattern code-point)
+               (let ((word (coerce (list (code-char code-point)) 'string)))
+                 (funcall collector (make-entry pattern word))))
              (recur-normal (base lst from-learn) ; returns 'count of entries from learn-dict.'
                (if (null lst)
                    (prog1 from-learn
@@ -186,12 +209,16 @@
       (with-slots (dicts) dictset
         (if exact-p
             ;;完全一致検索の場合
-            (multiple-value-bind (h k a err) (kana-convert-from-pattern pattern)
-              (add-hira-kata-ascii h k a)					;; 先にひらがな/カタカナ/ASCIIを候補にする
-              (add-when-digits)								;; 数字列変換
-              (recur-normal (funcall get-count) dicts 0)	;; 通常検索
-              (when (zerop err)
-                (search-okurigana dicts)))                  ;; kana-convert 完全成功なら「送りがな検索」
+            (aif (unicode-codepoint-p pattern)
+                 (progn
+                   (add-unicode-char pattern it)
+                   (funcall collector (make-entry pattern pattern)))
+                 (multiple-value-bind (h k a err) (kana-convert-from-pattern pattern)
+                   (add-hira-kata-ascii h k a)                ;; 先にひらがな/カタカナ/ASCIIを候補にする
+                   (add-when-digits)                          ;; 数字列変換
+                   (recur-normal (funcall get-count) dicts 0) ;; 通常検索
+                   (when (zerop err)
+                     (search-okurigana dicts))))              ;; kana-convert 完全成功なら「送りがな検索」
             ;;前方一致検索の場合
             (if (string= pattern "")
                 ;;空パターンの場合：確定後自動検索
