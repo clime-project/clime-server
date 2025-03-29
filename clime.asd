@@ -90,6 +90,7 @@
                                                                          "transaction"
                                                                          "utility"))
                              (:file "transaction"           :depends-on ("package"
+                                                                         "service.logger"
                                                                          "queue"))
                              (:file "utility"               :depends-on ("package"))
                              (:file "vague-matcher"         :depends-on ("package"))

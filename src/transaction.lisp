@@ -8,6 +8,7 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 #|
 #|ASD|#                             (:file "transaction"           :depends-on ("package"
+#|ASD|#                                                                         "service.logger"
 #|ASD|#                                                                         "queue"))
 #|EXPORT|#              ;transaction.lisp
 |#
@@ -44,6 +45,60 @@
    (response :initform nil :initarg :response :accessor transaction-response)
    (quit-p   :initform nil :initarg :quit-p   :accessor transaction-quit-p)
    (notifier :initform nil :initarg :notifier :accessor transaction-notifier)))
+
+
+(defparameter *transaction-request-count*   0)
+(defparameter *transaction-create-count*    0)
+(defparameter *transaction-reuse-count*     0)
+(defparameter *transaction-release-count*   0)
+(defparameter *transaction-pool*          nil)
+(defparameter *transaction-log-counter*     0)
+(defparameter *transaction-log-threshold*  20)
+
+(let ((lock (bt:make-lock)))
+
+  (defun transaction-stat-log ()
+    (incf *transaction-log-counter*)
+    (when (<= *transaction-log-threshold* *transaction-log-counter*)
+      (setf *transaction-log-counter* 0)
+      (logger-add-entry :info
+                        "transaction stat : req=~A, create=~A, reuse=~A, release=~A"
+                        *transaction-request-count*
+                        *transaction-create-count*
+                        *transaction-reuse-count*
+                        *transaction-release-count*)))
+      
+  (defun transaction-reuse-or-create (cdata request notifier)
+    (bt:with-lock-held (lock)
+      (incf *transaction-request-count*)
+      (prog1
+          (if *transaction-pool*
+              (let ((tran (pop *transaction-pool*)))
+                (setf (transaction-cdata    tran) cdata)
+                (setf (transaction-request  tran) request)
+                (setf (transaction-response tran) nil)
+                (setf (transaction-quit-p   tran) nil)
+                (setf (transaction-notifier tran) notifier)
+                (incf *transaction-reuse-count*)
+                tran)
+              (progn
+                (incf *transaction-create-count*)
+                (make-instance 'transaction :cdata    cdata
+                                            :request  request
+                                            :notifier notifier)))
+        (transaction-stat-log))))
+          
+
+  (defun transaction-release (tran)
+    (setf (transaction-cdata    tran) nil)
+    (setf (transaction-request  tran) nil)
+    (setf (transaction-response tran) nil)
+    (setf (transaction-quit-p   tran) nil)
+    (setf (transaction-notifier tran) nil)
+    (bt:with-lock-held (lock)
+      (incf *transaction-release-count*)
+      (push tran *transaction-pool*)
+      (transaction-stat-log))))
 
 
 ;;------------------------------------------------------------------------------------- BEGIN TURNUP
@@ -84,22 +139,18 @@
 ;;--------------------------------------------------------------------------------------- END TURNUP
 (defun transaction-execute (queue cdata request lock cvar)
   (when queue
-    (let ((tran (make-instance 'transaction
-                               :cdata    cdata
-                               :request  request
-                               :notifier (lambda ()
-                                           (bt:with-lock-held (lock)
-                                             (bt:condition-notify cvar))))))
+    (let ((tran (transaction-reuse-or-create cdata request
+                                             (lambda ()
+                                               (bt:with-lock-held (lock)
+                                                 (bt:condition-notify cvar))))))
+      (unless (transaction-notifier tran)
+        (logger-add-entry :error "notifier is null when (make-instance transaction)!"))
       (bt:with-lock-held (lock)
         (queue-enqueue queue tran)
         (bt:condition-wait cvar lock))
       (let ((response (transaction-response tran))
             (quit-p   (transaction-quit-p   tran)))
-        (setf (transaction-cdata    tran) nil)
-        (setf (transaction-request  tran) nil)
-        (setf (transaction-response tran) nil)
-        (setf (transaction-quit-p   tran) nil)
-        (setf (transaction-notifier tran) nil)
+        (transaction-release tran)
         (values response quit-p)))))
 
 
